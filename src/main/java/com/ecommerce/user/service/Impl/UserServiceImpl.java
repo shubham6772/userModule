@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,11 +27,10 @@ public class UserServiceImpl implements UserService {
 
         System.out.println("ExistingUser" + existingUser.isPresent());
         if(existingUser.isPresent()){
-            throw new EmailAlreadyExistException("user already exist with this email", "USER_ALREADY_EXIST");
+            throw new EmailAlreadyExistException("user already exist with this email");
         }
 
         User mappedUser = UserMapper.mapTOUserDto(user);
-        mappedUser.setId(UUID.randomUUID().toString());
 
         User savedUser = userRepository.save(mappedUser);
         return UserMapper.mapToClientDto(savedUser);

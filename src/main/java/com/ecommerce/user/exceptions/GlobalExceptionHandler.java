@@ -20,7 +20,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 LocalDateTime.now(),
                 exception.getMessage(),
                 webRequest.getDescription(false),
-                exception.getCode()
+                "EMAIL_ALREADY_EXIST"
         );
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
