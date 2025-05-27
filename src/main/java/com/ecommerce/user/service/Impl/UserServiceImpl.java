@@ -1,6 +1,7 @@
 package com.ecommerce.user.service.Impl;
 
-import com.ecommerce.user.dto.ClientDto;
+import com.ecommerce.user.dto.ClientCreateDto;
+import com.ecommerce.user.dto.ClientResponseDto;
 import com.ecommerce.user.entity.User;
 import com.ecommerce.user.exceptions.EmailAlreadyExistException;
 import com.ecommerce.user.exceptions.UserNotFoundException;
@@ -21,7 +22,7 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
-    public ClientDto createUser(ClientDto user) {
+    public ClientResponseDto createUser(ClientCreateDto user) {
 
         Optional<User> existingUser = userRepository.findByEmailIgnoreCase(user.getEmail().trim().toLowerCase());
 
@@ -30,20 +31,20 @@ public class UserServiceImpl implements UserService {
             throw new EmailAlreadyExistException("user already exist with this email");
         }
 
-        User mappedUser = UserMapper.mapTOUserDto(user);
+        User mappedUser = UserMapper.mapClientCreateToUserDto(user);
 
         User savedUser = userRepository.save(mappedUser);
         return UserMapper.mapToClientDto(savedUser);
     }
 
     @Override
-    public List<ClientDto> getAllUser() {
+    public List<ClientResponseDto> getAllUser() {
         List<User> savedUsers =  userRepository.findAll();
         return savedUsers.stream().map(UserMapper::mapToClientDto).collect(Collectors.toList());
     }
 
     @Override
-    public ClientDto updateUser(ClientDto user) {
+    public ClientResponseDto updateUser(ClientResponseDto user) {
         Optional<User> existingUser = userRepository.findById(user.getId());
         if(existingUser.isEmpty()){
             throw new UserNotFoundException("user not exist with this id");
@@ -57,5 +58,17 @@ public class UserServiceImpl implements UserService {
         User updatedUser = userRepository.save(savedUser);
 
         return UserMapper.mapToClientDto(updatedUser);
+    }
+
+    @Override
+    public ClientResponseDto getUser(ClientCreateDto user) {
+        Optional<User> existingUser = userRepository.findByEmailIgnoreCase(user.getEmail().trim().toLowerCase());
+
+        if(existingUser.isEmpty()){
+            throw new UserNotFoundException("user not exist with this email");
+        }
+
+        User savedUser = existingUser.get();
+        return UserMapper.mapToClientDto(savedUser);
     }
 }

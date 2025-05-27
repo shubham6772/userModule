@@ -1,11 +1,13 @@
 package com.ecommerce.user.service;
 
-import com.ecommerce.user.dto.ClientDto;
+import com.ecommerce.user.dto.ClientCreateDto;
+import com.ecommerce.user.dto.ClientResponseDto;
 
 import java.util.List;
 
 public interface UserService {
-    ClientDto createUser(ClientDto user);
-    List<ClientDto> getAllUser();
-    ClientDto updateUser(ClientDto user);
+    ClientResponseDto createUser(ClientCreateDto user);
+    List<ClientResponseDto> getAllUser();
+    ClientResponseDto updateUser(ClientResponseDto user);
+    ClientResponseDto getUser(ClientCreateDto user);
 }
