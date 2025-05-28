@@ -23,19 +23,8 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<ClientResponseDto> createUser(@RequestBody ClientCreateDto user, HttpServletRequest request){
+    public ResponseEntity<ClientResponseDto> createUser(@RequestBody ClientCreateDto user){
         ClientResponseDto savedUser = userService.createUser(user);
-
-        // Create or get session
-        HttpSession session = request.getSession(true); // create if not exists
-
-        // Store user ID and timestamp
-        session.setAttribute("USER_ID", savedUser.getId());
-        session.setAttribute("LOGIN_TIMESTAMP", Instant.now().toEpochMilli());
-
-        // Optional: set session timeout (seconds)
-        session.setMaxInactiveInterval(1 * 60); // 30 minutes TTL
-
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 

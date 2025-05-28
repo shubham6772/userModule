@@ -1,4 +1,4 @@
-package com.ecommerce.user.exceptions;
+package com.ecommerce.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

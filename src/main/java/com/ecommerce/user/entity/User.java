@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class User extends BaseEntity{
 
     @Id
-    @CustomId
+    @Column(name = "id", nullable = false, updatable = false)
     private String id;
 
     @Column(nullable = false)
@@ -24,4 +24,6 @@ public class User extends BaseEntity{
 
     @Column(nullable = false, unique = true)
     private String email;
+
+    private String sessionData;
 }

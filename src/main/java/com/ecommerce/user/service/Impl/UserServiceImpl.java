@@ -7,11 +7,16 @@ import com.ecommerce.user.exceptions.EmailAlreadyExistException;
 import com.ecommerce.user.exceptions.UserNotFoundException;
 import com.ecommerce.user.mapper.UserMapper;
 import com.ecommerce.user.repository.UserRepository;
+import com.ecommerce.user.service.RedisService;
 import com.ecommerce.user.service.UserService;
+import com.ecommerce.user.util.UniqueIDGenerator;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -19,22 +24,27 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
+    @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RedisService redisService;
 
     @Override
     public ClientResponseDto createUser(ClientCreateDto user) {
 
-        Optional<User> existingUser = userRepository.findByEmailIgnoreCase(user.getEmail().trim().toLowerCase());
+            Optional<User> existingUser = userRepository.findByEmailIgnoreCase(user.getEmail().trim().toLowerCase());
+            String generatedId = UniqueIDGenerator.generateUniqueId();
+            System.out.println("ExistingUser" + existingUser.isPresent());
+            if(existingUser.isPresent()){
+                throw new EmailAlreadyExistException("user already exist with this email");
+            }
 
-        System.out.println("ExistingUser" + existingUser.isPresent());
-        if(existingUser.isPresent()){
-            throw new EmailAlreadyExistException("user already exist with this email");
-        }
-
-        User mappedUser = UserMapper.mapClientCreateToUserDto(user);
-
-        User savedUser = userRepository.save(mappedUser);
-        return UserMapper.mapToClientDto(savedUser);
+            User mappedUser = UserMapper.mapClientCreateToUserDto(user);
+            mappedUser.setId(generatedId);
+            redisService.saveUser(generatedId, mappedUser);
+            mappedUser.setSessionData(mappedUser.toString());
+            User savedUser = userRepository.save(mappedUser);
+            return UserMapper.mapToClientDto(savedUser);
     }
 
     @Override

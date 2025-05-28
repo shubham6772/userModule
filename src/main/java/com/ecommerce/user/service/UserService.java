@@ -2,6 +2,7 @@ package com.ecommerce.user.service;
 
 import com.ecommerce.user.dto.ClientCreateDto;
 import com.ecommerce.user.dto.ClientResponseDto;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
